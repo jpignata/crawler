@@ -1,24 +1,31 @@
-class Future
+class Future < BasicObject
   def initialize(callable)
-    @callable = callable
-  end
-
-  def run
-    @thread ||= Thread.new { @value = @callable.call }
-
-    self
+    @thread ||= ::Thread.new { callable.call }
   end
 
   def value
-    run
-    @thread.join unless defined?(@value)
+    @thread.value
+  end
 
-    @value
+  def inspect
+    if @thread.alive?
+      "#<Future running>"
+    else
+      value.inspect
+    end
+  end
+
+  def method_missing(method, *args)
+    value.send(method, *args)
+  end
+
+  def respond_to_missing?(method, include_private = false)
+    value.respond_to?(method)
   end
 end
 
 module Kernel
   def future(&block)
-    Future.new(block).run
+    Future.new(block)
   end
 end

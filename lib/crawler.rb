@@ -12,10 +12,6 @@ class Crawler
   private
 
   def pages
-    futures.map(&:value)
-  end
-
-  def futures
     @index.urls.map do |url|
       future { Page.new(url).get }
     end
