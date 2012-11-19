@@ -1,0 +1,9 @@
+$: << "./lib"
+
+require "future"
+require "crawler"
+require "index"
+require "page"
+require "outputter"
+
+Crawler.new(Index.new).crawl
